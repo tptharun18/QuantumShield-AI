@@ -1,19 +1,28 @@
 from fastapi import FastAPI
+from app.core.settings import settings
+from app.core.logger import app_logger
 
 app = FastAPI(
-    title="QuantumShield AI",
-    description="Enterprise Identity, Cloud & Post-Quantum Security Intelligence Platform",
-    version="0.1.0"
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
 )
+
+app_logger.info("QuantumShield AI started successfully")
+
 
 @app.get("/")
 def root():
+    app_logger.info("Root endpoint accessed")
     return {
-        "message": "Welcome to QuantumShield AI"
+        "message": f"Welcome to {settings.APP_NAME}"
     }
+
 
 @app.get("/health")
 def health():
+    app_logger.info("Health endpoint accessed")
     return {
-        "status": "healthy"
+        "status": "healthy",
+        "version": settings.APP_VERSION,
+        "debug": settings.DEBUG
     }
