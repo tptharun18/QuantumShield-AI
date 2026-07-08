@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.core.settings import settings
 from app.core.logger import app_logger
+from app.db.postgres import check_postgres
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -25,4 +26,17 @@ def health():
         "status": "healthy",
         "version": settings.APP_VERSION,
         "debug": settings.DEBUG
+    }
+
+@app.get("/database")
+def database_status():
+
+    if check_postgres():
+        return {
+            "status": "connected",
+            "database": "quantumshield"
+        }
+
+    return {
+        "status": "disconnected"
     }
