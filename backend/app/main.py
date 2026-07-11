@@ -3,22 +3,34 @@ from fastapi import FastAPI
 from app.core.settings import settings
 from app.core.logger import app_logger
 from app.db.postgres import check_postgres
+
+# Routers
 from app.auth.router import router as auth_router
+from app.api.admin import router as admin_router
 
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
 )
 
-# Register Authentication Routes
+# ==========================================================
+# Register Routers
+# ==========================================================
+
 app.include_router(
     auth_router,
     prefix="/auth",
     tags=["Authentication"],
 )
 
+app.include_router(admin_router)
+
 app_logger.info("QuantumShield AI started successfully")
 
+
+# ==========================================================
+# Root
+# ==========================================================
 
 @app.get("/")
 def root():
@@ -27,6 +39,10 @@ def root():
         "message": f"Welcome to {settings.APP_NAME}"
     }
 
+
+# ==========================================================
+# Health Check
+# ==========================================================
 
 @app.get("/health")
 def health():
@@ -37,6 +53,10 @@ def health():
         "debug": settings.DEBUG
     }
 
+
+# ==========================================================
+# Database Status
+# ==========================================================
 
 @app.get("/database")
 def database_status():
